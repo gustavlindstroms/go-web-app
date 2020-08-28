@@ -1,104 +1,45 @@
-# MemCachier and Gin on Elastic Beanstalk tutorial
+# AWS Elastic Beanstalk Go Demo
 
-This is an example Gin Gonic app that uses the
-[MemCachier add-on](https://addons.heroku.com/memcachier) on
-[Elastic Beanstalk](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/Welcome.html).
+Video demo: https://markrichman.com/2017/02/17/aws-elastic-beanstalk-go/
 
-Detailed instructions for developing this app are available
-[here](https://blog.memcachier.com/2018/07/30/gin-elastic-beanstalk-and-memcache).
+## Creating a source bundle
 
-## Running Locally
+Create a zip file from the root of this package, for example:
 
-Run the following commands to get started running this app locally:
+`cd $GOPATH/src/github.com/mrichman/elastic-beanstalk-go-demo`
 
-```sh
-$ cd $GOPATH/src
-$ git clone https://github.com/memcachier/examples-gin.git
-$ cd examples-gin
-$ govendor sync
-$ memcached &  # run a local memcached server instance
-$ MEMCACHIER_SERVERS=localhost:11211 go run main.go
-```
+Then, either zip it from the command line:
 
-Then visit `http://localhost:5000` to play with the app.
+`zip ../eb.zip -r * .[^.]*`
 
-Note: instead of running a local `memcached` server you can also create a
-[MemCachier](https://www.memcachier.com/) cache and add the `MEMCACHIER_*`
-variables to the environment).
+or use `git`:
 
-## Deploy to Elastic Beanstalk
+`git archive -o ../eb.zip HEAD`
 
-You can deploy this app yourself to Elastic Beanstalk to play with.
+The git command above will zip up the last commit on master.
 
-```bash
-$ eb init
+## Deploying a Go Application on Elastic Beanstalk
 
-# We'll stick with the default for now.
-Select a default region
-[...]
-(default is 3): 3
+Browse to the [Elastic Beanstalk console](https://console.aws.amazon.com/elasticbeanstalk/), and click "Create New Application".
 
-Select an application to use
-?) [ Create new Application ]
-(default is 1): # Select whichever option lets you create a new application
+Give it a name, for example "Go Demo". Then create a new web server environment. For "Platform", select "Go", then select "Upload your code".
 
-# You can make the name whatever you like.
-# By default it will match the file directory.
-Enter Application Name
-(default is "gin-memcache"): gin-memcache
-Application gin-memcache has been created.
+For simple Go applications, there are two ways to deploy your application:
 
-# This is a go tutorial, so we'll pick go.
-Select a platform.
-[...]
-10) Go
-[...]
-(default is 1): 10
+* **Method 1:** Provide a source bundle with a source file at the root called application.go that contains the main package for your application. Elastic Beanstalk automatically builds the binary using the following command at deployment time:
 
+    `go build -o bin/application application.go`
 
-Select a platform version.
-1) Go 1.10
-2) Go 1.9
-3) Go 1.8
-4) Go 1.6
-5) Go 1.5
-6) Go 1.4
-(default is 1): # Select your version of go.
+* **Method 2:** Provide a source bundle with a binary file called application. The binary file can be located either at the root of the source bundle or in the bin/ directory of the source bundle. If you place the application binary file in both locations, Elastic Beanstalk uses the file in the bin/ directory.
 
-# don't worry about this bit for now. You can always turn it on later using `eb init`
-Note: Elastic Beanstalk now supports AWS CodeCommit; a fully-managed source control service. To learn more, see Docs: https://aws.amazon.com/codecommit/
-Do you wish to continue with CodeCommit? (y/N) (default is n): n
+By default, Elastic Beanstalk configures the nginx proxy to forward requests to your application on port 5000. You can override the default port by setting the `PORT` system property to the port on which your main application listens.
 
-# You can if you want, but we'll skip that that now.
-Do you want to set up SSH for your instances?
-(Y/n): n
-```
+For "Source code origin", choose "Local file" and pick the `eb.zip` file created above. Enter anything for "Version label".
 
-Now that you've set up your application repository, we'll need to create the EB
-instance.
+Click "Upload", then back at the "Create a new environment" screen, click "Create environment".
 
-```bash
-$ eb create
+Your application will begin to deploy. This process can take several minutes.
 
-# Can be whatever you want. We'll stick with the default for now.
-Enter Environment Name
-(default is gin-memcache-dev): gin-memcache-dev
+When the deployment is complete, you'll be redirected to your Elastic Beanstalk application's overview page. In the breadcrumb trail at the top, next to your Environment ID, you'll see a URL in the control panel ending in `elasticbeanstalk.com` where you can browse your application.
 
-# This will be the beginning of all of your URLs. We won't be doing anything
-# with this, so we'll use the default option again.
-Enter DNS CNAME prefix
-(default is gin-memcache-dev): gin-memcache-dev
-
-# In case you're sensing a theme here.. We'll stick with default for now.
-Select a load balancer type
-1) classic
-2) application
-3) network
-(default is 1): 1
-```
-
-```bash
-$ eb setenv MEMCACHIER_USERNAME=<username> MEMCACHIER_PASSWORD=<password> MEMCACHIER_SERVERS=<servers>
-# ...
-$ eb deploy
-```
+To clean up after yourself, and terminate your application, click the Actions menu and select "Terminate Environment". This will terminate any EC2 instances created during deployment. You can restart your application by selecting Actions -> Create Environment again.
