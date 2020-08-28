@@ -1,24 +1,17 @@
 package main
 
 import (
-	"log"
 	"net/http"
-	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "5000"
-	}
+	router := gin.Default()
 
-	const indexPage = "public/index.html"
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Serving %s to %s...\n", indexPage, r.RemoteAddr)
-		http.ServeFile(w, r, indexPage)
+	router.GET("/user/:name", func(c *gin.Context) {
+		name := c.Param("name")
+		c.String(http.StatusOK, "Hello %s", name)
 	})
-
-	log.Printf("Listening on port %s\n\n", port)
-	http.ListenAndServe(":"+port, nil)
+	router.Run(":5000")
 }
