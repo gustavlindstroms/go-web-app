@@ -1,21 +1,30 @@
-# Go Web App Deployment on AWS EBS
+# go-beanstalk-gin
 
+> A demo webapp using Go, gin and Elastic Beanstalk.
 
-## Creating source bundle
+This project demonstrates the deployment of a simple webapp built using
+[`gin`][gin] to [Elastic Beanstalk][elastic-beanstalk]. Dependencies are
+managed using [`dep`][dep].
 
-Zip HEAD from command line:
+This tutorial should be usable on Windows and *nix. Most of the tools, like the
+[Go tool][go-tool] and [EB CLI][eb-cli] are cross platform compatible. For some
+of the commands which aren't available on Windows, alternate commands have been
+included. I successfully tested it on Windows 10 and Ubuntu.
 
-`git archive -o ../eb.zip HEAD`
+## Docs
 
-The git command above will zip up the last commit on master.
+The steps have been divided and documented in the following stages:
 
-## Deploying a Go Application on Elastic Beanstalk
+1. [Create gin webapp](docs/create-gin-webapp.md)
+1. [Deploy to Elastic Beanstalk](docs/deploy-to-elastic-beanstalk.md)
 
-Browse to the [Elastic Beanstalk console](https://console.aws.amazon.com/elasticbeanstalk/), and select destination appliacation.
+## License
 
-* **Upload:** Provide a source bundle with a source file at the root called application.go that contains the main package for your application. Elastic Beanstalk automatically builds the binary using the following command at deployment time:
+MIT © [Suhas Karanth][sudo-suhas]
 
-    `go build -o bin/application application.go`
-
-
-MIT LICENSE GUSTAV LINSTRÖM
+[gin]: https://github.com/gin-gonic/gin
+[elastic-beanstalk]: https://aws.amazon.com/documentation/elastic-beanstalk/
+[dep]: https://github.com/golang/dep
+[go-tool]: https://golang.org/cmd/go/
+[eb-cli]: http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3.html
+[sudo-suhas]: https://github.com/sudo-suhas
