@@ -14,5 +14,5 @@ func main() {
 		c.String(http.StatusOK, "Hello %s %s", name, name)
 	})
 
-	router.Run()
+	router.Run(":5000")
 }
