@@ -1,6 +1,5 @@
-# Go Web App Deployment
+# Go Web App Deployment on AWS EBS
 
-Video demo: https://markrichman.com/2017/02/17/aws-elastic-beanstalk-go/
 
 ## Creating source bundle
 
