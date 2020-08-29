@@ -1,1 +1,1 @@
-build: ./build.sh
+buildandserve: ./build.sh
