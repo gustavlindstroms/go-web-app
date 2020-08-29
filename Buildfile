@@ -1,1 +1,1 @@
-buildandserve: ./build.sh
+application1: ./build.sh
