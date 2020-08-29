@@ -1,3 +1,3 @@
 go get "github.com/gin-gonic/gin"
 
-go build application.go
+go build -o bin/application application.go
